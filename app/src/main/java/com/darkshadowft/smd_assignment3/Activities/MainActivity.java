@@ -1,12 +1,10 @@
-package com.darkshadowft.smd_assignment3;
+package com.darkshadowft.smd_assignment3.Activities;
 
 
 import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.DividerItemDecoration;
@@ -17,7 +15,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.ActionMode;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -27,6 +24,13 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Filterable;
 
+
+import com.darkshadowft.smd_assignment3.IProductDAO;
+import com.darkshadowft.smd_assignment3.Product;
+import com.darkshadowft.smd_assignment3.Adapters.ProductAdapter;
+import com.darkshadowft.smd_assignment3.FirebaseDAO;
+import com.darkshadowft.smd_assignment3.ProductViewModel;
+import com.darkshadowft.smd_assignment3.R;
 
 import java.util.ArrayList;
 
@@ -70,12 +74,12 @@ public class MainActivity extends AppCompatActivity implements ProductAdapter.Pr
 				RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
 				recyclerView.setLayoutManager(layoutManager);
 
-				productDAO = new ProductFirebaseDAO(new ProductFirebaseDAO.DataObserver() {
+				productDAO = new FirebaseDAO(new FirebaseDAO.DataObserver() {
 						@Override
 						public void update() {
 								refresh();
 						}
-				});
+				}, "product");
 
 				ProductViewModel productViewModel = new ViewModelProvider(MainActivity.this).get(ProductViewModel.class);
 				productViewModel.setDao(productDAO);
@@ -155,7 +159,7 @@ public class MainActivity extends AppCompatActivity implements ProductAdapter.Pr
 
 										adp.removeSelectedItems();
 										mode.finish();
-										productDAO.emptyTable();
+										productDAO.deleteAllProducts();
 										for (int i = 0; i < dataSet.size(); i++){
 												dataSet.get(i).save();
 										}
